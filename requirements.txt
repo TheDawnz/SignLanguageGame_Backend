@@ -1,5 +1,11 @@
-opencv-python
+fastapi
+uvicorn
 torch
 torchvision
 transformers
-Pillow
+pillow
+opencv-python-headless
+numpy
+sqlalchemy
+psycopg2-binary
+python-jose
