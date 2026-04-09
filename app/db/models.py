@@ -1,18 +1,32 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 
-DATABASE_URL = "postgresql://username:password@your-rds-endpoint:5432/dbname"
+from app.db.database import Base
 
-engine = create_engine(DATABASE_URL)
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+class User(Base):
+    __tablename__ = "users"
 
-Base = declarative_base()
+    id = Column(Integer, primary_key=True, index=True)
+    cognito_id = Column(String, unique=True, index=True, nullable=False)
+    username = Column(String, nullable=False)
 
-# Dependency for FastAPI
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Relationship
+    scores = relationship("Score", back_populates="user", cascade="all, delete")
+
+
+class Score(Base):
+    __tablename__ = "scores"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+
+    score = Column(Integer, nullable=False)
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Relationship
+    user = relationship("User", back_populates="scores")
