@@ -1,10 +1,11 @@
 from fastapi import FastAPI
-from app.api import game
+from app.db.database import Base, engine
+from app.api import user, leaderboard
 
 app = FastAPI()
 
-app.include_router(game.router, prefix="/game")
+# Create tables
+Base.metadata.create_all(bind=engine)
 
-@app.get("/")
-def root():
-    return {"message": "Sign Language Game API"}
+app.include_router(user.router, prefix="/user")
+app.include_router(leaderboard.router, prefix="/leaderboard")

@@ -1,4 +1,4 @@
-from app.core.word_generator import get_word
+from app.core.word import get_word
 from app.core.scoring import calculate_score
 from app.ai.model import predict_sign
 
